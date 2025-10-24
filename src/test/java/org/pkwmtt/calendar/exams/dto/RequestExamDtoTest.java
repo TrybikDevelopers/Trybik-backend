@@ -1,22 +1,30 @@
 package org.pkwmtt.calendar.exams.dto;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
+import jakarta.validation.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.pkwmtt.calendar.adnotations.CorrectFutureDateValidator;
+import org.pkwmtt.utils.UtilsService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class RequestExamDtoTest {
 
-    private final Validator validator;
+    private Validator validator;
 
-    public RequestExamDtoTest() {
-        this.validator = Validation.buildDefaultValidatorFactory().getValidator();
+    @BeforeEach
+    void setUp() {
+        validator = createValidator();
     }
 
     @Test
@@ -238,7 +246,7 @@ class RequestExamDtoTest {
     }
 
     @Test
-    void dateToFarInFuture() {
+    void dateTooFarInFuture() {
         //given
         RequestExamDto requestExamDto = RequestExamDto.builder()
                 .title("Math exam")
@@ -253,6 +261,33 @@ class RequestExamDtoTest {
         //then
         assertFalse(validator.validate(requestExamDto).isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("date")));
+    }
+
+    private Validator createValidator() {
+        UtilsService utilsServiceMock = mock(UtilsService.class);
+        lenient().when(utilsServiceMock.getEndOfSemester()).thenReturn(Optional.of(LocalDate.now().plusDays(10)));
+
+        ConstraintValidatorFactory factory = new ConstraintValidatorFactory() {
+            @Override
+            public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
+                if (key.equals(CorrectFutureDateValidator.class)) {
+                    return (T) new CorrectFutureDateValidator(utilsServiceMock);
+                }
+                try {
+                    return key.getDeclaredConstructor().newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            @Override
+            public void releaseInstance(ConstraintValidator<?, ?> instance) {}
+        };
+
+        return Validation.byDefaultProvider()
+                .configure()
+                .constraintValidatorFactory(factory)
+                .buildValidatorFactory()
+                .getValidator();
     }
 
 }

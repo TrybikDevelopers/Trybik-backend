@@ -2,12 +2,18 @@ package org.pkwmtt.calendar.adnotations;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.RequiredArgsConstructor;
+import org.pkwmtt.utils.UtilsService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static java.util.Objects.isNull;
 
+@RequiredArgsConstructor
 public class CorrectFutureDateValidator implements ConstraintValidator<CorrectFutureDate, LocalDateTime> {
+
+    private final UtilsService utilsService;
 
     @Override
     public boolean isValid(LocalDateTime time, ConstraintValidatorContext constraintValidatorContext) {
@@ -21,8 +27,15 @@ public class CorrectFutureDateValidator implements ConstraintValidator<CorrectFu
             return false;
         }
 
-        //TODO Date need to be extracted to f.e DB (this date is end of semester, maybe have to change to +1 month after end of semester)
-        if (time.isAfter(LocalDateTime.of(2026, 2, 22, 0, 0))) {
+        LocalDate endOfSemester;
+        var utilOptional = utilsService.getEndOfSemester();
+        if (utilOptional.isPresent()) {
+            endOfSemester = utilOptional.get();
+        } else {
+            setMessage(constraintValidatorContext, "End of semester date is not configured");
+            return false;        }
+
+        if (time.isAfter(endOfSemester.atStartOfDay())) {
             setMessage(constraintValidatorContext, "Date is too far in the future");
             return false;
         }

@@ -2,13 +2,11 @@ package org.pkwmtt.utils;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.pkwmtt.cache.CacheInspector;
 import org.pkwmtt.security.config.NoSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
@@ -31,16 +29,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class UtilsServiceTest extends TestConfig {
     
     @Autowired
-    UtilsService utilsService;
+    private UtilsService utilsService;
     
     @Autowired
-    UtilsRepository repository;
+    private UtilsRepository repository;
     
     @Autowired
-    CacheManager cacheManager;
+    private CacheManager cacheManager;
     
     @Autowired
-    CacheInspector cacheInspector;
+    private CacheInspector cacheInspector;
     
     @BeforeEach
     void setUp () {
