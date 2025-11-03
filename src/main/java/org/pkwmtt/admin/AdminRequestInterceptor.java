@@ -16,6 +16,7 @@ import static java.util.Objects.isNull;
 
 @RequiredArgsConstructor
 @Component
+@Deprecated
 public class AdminRequestInterceptor implements HandlerInterceptor {
 
     private static final String X_ADMIN_KEY_HEADER = "X-ADMIN-KEY";

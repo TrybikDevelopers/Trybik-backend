@@ -20,6 +20,7 @@ import static java.util.Objects.isNull;
 @Component
 @RequiredArgsConstructor
 @Profile("!test & !database") //Skip on tests
+@Deprecated
 public class RequestInterceptor implements HandlerInterceptor {
 
     private static final String X_API_KEY_HEADER = "X-API-KEY";

@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Configuration
 @RequiredArgsConstructor
+@Deprecated
 public class WebConfig implements WebMvcConfigurer {
     
     //During tests RequestInterceptor isn't required
