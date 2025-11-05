@@ -3,6 +3,7 @@ package org.pkwmtt.security.config;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkwmtt.examCalendar.enums.Role;
+import org.pkwmtt.security.filter.AdminKeyFilter;
 import org.pkwmtt.security.filter.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SpringSecurity {
 
     private final JwtFilter jwtFilter;
+    private final AdminKeyFilter adminKeyFilter;
     
     @Bean
     public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
@@ -43,6 +45,7 @@ public class SpringSecurity {
                   .anyRequest().authenticated()
           )
           .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                .addFilterBefore(adminKeyFilter, JwtFilter.class)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         log.info("Configuring Success...");
         return http.build();
