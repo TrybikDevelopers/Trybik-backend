@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.pkwmtt.security.apiKey.ApiKeyService;
 import org.pkwmtt.security.authentication.authenticationToken.HeaderAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,7 +32,9 @@ public class AdminKeyFilter extends OncePerRequestFilter {
 
         String adminKey = request.getHeader("X_ADMIN_KEY_HEADER");
 
-        if(SecurityContextHolder.getContext().getAuthentication() == null && adminKey != null && apiKeyService.existsInAdminKeyBase(adminKey)){
+        if(SecurityContextHolder.getContext().getAuthentication() == null || adminKey != null){
+            if(!apiKeyService.existsInAdminKeyBase(adminKey))
+                throw new BadCredentialsException("Invalid Admin Key");
 
             GrantedAuthority role = new SimpleGrantedAuthority("ROLE_ADMIN");
             Authentication auth = new HeaderAuthenticationToken(role);

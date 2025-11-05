@@ -29,9 +29,8 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         String apiKey = request.getHeader("X-API-KEY");
 
         if(SecurityContextHolder.getContext().getAuthentication() == null) {
-            if(apiKey == null || !apiKeyService.existsInAdminKeyBase(apiKey)){
+            if(apiKey == null || !apiKeyService.existsInAdminKeyBase(apiKey))
                 throw new BadCredentialsException("Invalid API KEY");
-            }
         }
         filterChain.doFilter(request, response);
     }
