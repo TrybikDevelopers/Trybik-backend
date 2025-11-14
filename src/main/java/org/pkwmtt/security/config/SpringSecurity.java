@@ -37,19 +37,24 @@ public class SpringSecurity {
           .cors(withDefaults())
           .csrf(AbstractHttpConfigurer::disable)
           .authorizeHttpRequests(auth -> auth
-                  .requestMatchers(HttpMethod.POST , "/pkwmtt/api/v1/exams").hasRole("STUDENT")
-                  .requestMatchers(HttpMethod.PUT , "/pkwmtt/api/v1/exams").hasRole("STUDENT")
-                  .requestMatchers(HttpMethod.DELETE , "/pkwmtt/api/v1/exams").hasRole("STUDENT")
-                  .requestMatchers("/moderator/authenticate").permitAll()
-                  .requestMatchers("/moderator/refresh").permitAll()
-                  .requestMatchers("/moderator/**").hasRole(Role.MODERATOR.toString())
-                  .requestMatchers("/**").permitAll()
-                  .anyRequest().authenticated()
+                  .requestMatchers(HttpMethod.GET , "/pkwmtt/api/v1/exams").permitAll()
+
+                  .requestMatchers(HttpMethod.POST , "/pkwmtt/api/v1/exams").hasRole(Role.STUDENT.toString())
+                  .requestMatchers(HttpMethod.PUT , "/pkwmtt/api/v1/exams").hasRole(Role.STUDENT.toString())
+                  .requestMatchers(HttpMethod.DELETE , "/pkwmtt/api/v1/exams").hasRole(Role.STUDENT.toString())
+
+                  .requestMatchers("/pkwmtt/api/v1/moderator/authenticate").permitAll()
+                  .requestMatchers("/pkwmtt/api/v1/moderator/refresh").permitAll()
+                  .requestMatchers("/pkwmtt/api/v1/moderator/**").hasRole(Role.MODERATOR.toString())
+
+                  .requestMatchers("/admin").hasRole(Role.ADMIN.toString())
+
+                  .anyRequest().denyAll()
           )
           .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                .addFilterBefore(adminKeyFilter, ApiKeyFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(apiKeyFilter, JwtFilter.class)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(adminKeyFilter, ApiKeyFilter.class);
         log.info("Configuring Success...");
         return http.build();
     }
