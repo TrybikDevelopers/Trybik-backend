@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BugReportsController {
     private final BugReportsService service;
-    
+
+//    TODO: require anti-spam validation
     @PostMapping("/report")
     public ResponseEntity<Void> reportBug (@RequestBody NewBugReportDTO bugReportDTO) {
-        
+
+//        FIXME: Probably should be moved to service
         service.addBugReport(new BugReportDTO(
           0,
           bugReportDTO.getUserGroups(),

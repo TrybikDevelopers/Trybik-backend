@@ -29,7 +29,7 @@ public class SpringSecurity {
     private final JwtFilter jwtFilter;
     private final AdminKeyFilter adminKeyFilter;
     private final ApiKeyFilter apiKeyFilter;
-    
+
     @Bean
     public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
         log.info("Configuring Security Filter Chain...");
@@ -37,18 +37,35 @@ public class SpringSecurity {
           .cors(withDefaults())
           .csrf(AbstractHttpConfigurer::disable)
           .authorizeHttpRequests(auth -> auth
+//                  public (require API key)
                   .requestMatchers(HttpMethod.GET , "/pkwmtt/api/v1/exams").permitAll()
+                  .requestMatchers("/pkwmtt/api/v1/timetables/**").permitAll()
+//                  TODO: require anti-spam validation
+                  .requestMatchers("/pkwmtt/api/v1/bug-reports").permitAll()
 
+//                  student
                   .requestMatchers(HttpMethod.POST , "/pkwmtt/api/v1/exams").hasRole(Role.STUDENT.toString())
                   .requestMatchers(HttpMethod.PUT , "/pkwmtt/api/v1/exams").hasRole(Role.STUDENT.toString())
                   .requestMatchers(HttpMethod.DELETE , "/pkwmtt/api/v1/exams").hasRole(Role.STUDENT.toString())
+                  .requestMatchers("/pkwmtt/api/v1/student/authenticate").permitAll()
+                  .requestMatchers("/pkwmtt/api/v1/student/refresh").permitAll()
+                  .requestMatchers("/pkwmtt/api/v1/student/logout").permitAll()
 
+//                  moderator
                   .requestMatchers("/pkwmtt/api/v1/moderator/authenticate").permitAll()
                   .requestMatchers("/pkwmtt/api/v1/moderator/refresh").permitAll()
                   .requestMatchers("/pkwmtt/api/v1/moderator/**").hasRole(Role.MODERATOR.toString())
 
-                  .requestMatchers("/admin").hasRole(Role.ADMIN.toString())
+//                  admin
+                  .requestMatchers("/admin/**").hasRole(Role.ADMIN.toString())
 
+//                  file
+//                  TODO: [BEFORE MERGE] delete after upload to google play or permit
+                  .requestMatchers("/pkwmtt/api/v1/apk/**").denyAll()
+
+//                  other
+//                  TODO: refactor or remove
+                  .requestMatchers("/global/metrics").denyAll()
                   .anyRequest().denyAll()
           )
           .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
