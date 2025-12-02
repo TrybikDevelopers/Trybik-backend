@@ -38,30 +38,30 @@ public class SpringSecurity {
           .csrf(AbstractHttpConfigurer::disable)
           .authorizeHttpRequests(auth -> auth
 //                  public (require API key)
-                  .requestMatchers(HttpMethod.GET , "/pkwmtt/api/v1/exams").permitAll()
-                  .requestMatchers("/pkwmtt/api/v1/timetables/**").permitAll()
+                  .requestMatchers(HttpMethod.GET , "/pkwmtt/api/v1/exams/**").permitAll()
+                  .requestMatchers("${apiPrefix}/timetables/**").permitAll()
 //                  TODO: require anti-spam validation
-                  .requestMatchers("/pkwmtt/api/v1/bug-reports").permitAll()
+                  .requestMatchers("${apiPrefix}/bug-reports").permitAll()
 
 //                  student
-                  .requestMatchers(HttpMethod.POST , "/pkwmtt/api/v1/exams").hasRole(Role.STUDENT.toString())
-                  .requestMatchers(HttpMethod.PUT , "/pkwmtt/api/v1/exams").hasRole(Role.STUDENT.toString())
-                  .requestMatchers(HttpMethod.DELETE , "/pkwmtt/api/v1/exams").hasRole(Role.STUDENT.toString())
-                  .requestMatchers("/pkwmtt/api/v1/student/authenticate").permitAll()
-                  .requestMatchers("/pkwmtt/api/v1/student/refresh").permitAll()
-                  .requestMatchers("/pkwmtt/api/v1/student/logout").permitAll()
+                  .requestMatchers(HttpMethod.POST , "${apiPrefix}/exams").hasRole(Role.STUDENT.toString())
+                  .requestMatchers(HttpMethod.PUT , "${apiPrefix}/exams").hasRole(Role.STUDENT.toString())
+                  .requestMatchers(HttpMethod.DELETE , "${apiPrefix}/exams").hasRole(Role.STUDENT.toString())
+                  .requestMatchers("${apiPrefix}/student/authenticate").permitAll()
+                  .requestMatchers("${apiPrefix}/student/refresh").permitAll()
+                  .requestMatchers("${apiPrefix}/student/logout").permitAll()
 
 //                  moderator
-                  .requestMatchers("/pkwmtt/api/v1/moderator/authenticate").permitAll()
-                  .requestMatchers("/pkwmtt/api/v1/moderator/refresh").permitAll()
-                  .requestMatchers("/pkwmtt/api/v1/moderator/**").hasRole(Role.MODERATOR.toString())
+                  .requestMatchers("${apiPrefix}/moderator/authenticate").permitAll()
+                  .requestMatchers("${apiPrefix}/moderator/refresh").permitAll()
+                  .requestMatchers("${apiPrefix}/moderator/**").hasRole(Role.MODERATOR.toString())
 
 //                  admin
                   .requestMatchers("/admin/**").hasRole(Role.ADMIN.toString())
 
 //                  file
 //                  TODO: [BEFORE MERGE] delete after upload to google play or permit
-                  .requestMatchers("/pkwmtt/api/v1/apk/**").denyAll()
+                  .requestMatchers("${apiPrefix}/apk/**").denyAll()
 
 //                  other
 //                  TODO: refactor or remove

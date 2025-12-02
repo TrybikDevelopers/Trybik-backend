@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.pkwmtt.security.apiKey.ApiKeyService;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -29,9 +31,16 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         String apiKey = request.getHeader("X-API-KEY");
 
         if(SecurityContextHolder.getContext().getAuthentication() == null) {
-            if(apiKey == null || !apiKeyService.existsInAdminKeyBase(apiKey))
+            if(apiKey == null || !apiKeyService.existsInPublicKeyBase(apiKey))
                 throw new BadCredentialsException("Invalid API KEY");
         }
         filterChain.doFilter(request, response);
+    }
+
+    @Bean
+    public FilterRegistrationBean<ApiKeyFilter> registerApiKeyFilter(ApiKeyFilter filter){
+        FilterRegistrationBean<ApiKeyFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
     }
 }

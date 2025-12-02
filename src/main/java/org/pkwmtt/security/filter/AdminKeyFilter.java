@@ -8,6 +8,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.pkwmtt.security.apiKey.ApiKeyService;
 import org.pkwmtt.security.authentication.authenticationToken.HeaderAuthenticationToken;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,9 +32,9 @@ public class AdminKeyFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        String adminKey = request.getHeader("X_ADMIN_KEY_HEADER");
+        String adminKey = request.getHeader("x-admin-key");
 
-        if(SecurityContextHolder.getContext().getAuthentication() == null || adminKey != null){
+        if(SecurityContextHolder.getContext().getAuthentication() == null && adminKey != null){
             if(!apiKeyService.existsInAdminKeyBase(adminKey))
                 throw new BadCredentialsException("Invalid Admin Key");
 
@@ -42,5 +44,12 @@ public class AdminKeyFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
         filterChain.doFilter(request, response);
+    }
+
+    @Bean
+    public FilterRegistrationBean<AdminKeyFilter> registerAdminKeyFilter(AdminKeyFilter filter){
+        FilterRegistrationBean<AdminKeyFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
     }
 }
