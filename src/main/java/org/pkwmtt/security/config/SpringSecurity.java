@@ -38,7 +38,7 @@ public class SpringSecurity {
           .csrf(AbstractHttpConfigurer::disable)
           .authorizeHttpRequests(auth -> auth
 //                  public (require API key)
-                  .requestMatchers(HttpMethod.GET , "/pkwmtt/api/v1/exams/**").permitAll()
+                  .requestMatchers(HttpMethod.GET , "${apiPrefix}/exams/**").permitAll()
                   .requestMatchers("${apiPrefix}/timetables/**").permitAll()
 //                  TODO: require anti-spam validation
                   .requestMatchers("${apiPrefix}/bug-reports").permitAll()
@@ -52,7 +52,7 @@ public class SpringSecurity {
                   .requestMatchers("${apiPrefix}/student/logout").permitAll()
 
 //                  moderator
-                  .requestMatchers("${apiPrefix}/moderator/authenticate").permitAll()
+                  .requestMatchers(HttpMethod.POST ,"${apiPrefix}/moderator/authenticate").permitAll()
                   .requestMatchers("${apiPrefix}/moderator/refresh").permitAll()
                   .requestMatchers("${apiPrefix}/moderator/**").hasRole(Role.MODERATOR.toString())
 
