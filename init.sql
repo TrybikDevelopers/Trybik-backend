@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Wrz 25, 2025 at 06:13 PM
--- Wersja serwera: 9.3.0
+-- Generation Time: Lis 16, 2025 at 01:29 PM
+-- Wersja serwera: 9.4.0
 -- Wersja PHP: 8.2.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -30,21 +30,19 @@ USE `pktt`;
 --
 
 DROP TABLE IF EXISTS `admin_keys`;
-CREATE TABLE IF NOT EXISTS `admin_keys` (
-  `key_id` int NOT NULL AUTO_INCREMENT,
-  `value` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`key_id`),
-  UNIQUE KEY `unique_value` (`value`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `admin_keys` (
+  `key_id` int NOT NULL,
+  `value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Zrzut danych tabeli `admin_keys`
 --
 
 INSERT INTO `admin_keys` (`key_id`, `value`, `description`) VALUES
-(3, '0923cd6f-cd33-4883-87e4-ae3b50b80a3f', 'mikolaj'),
-(4, '2868b02b-a5dd-4386-a723-e450e5f54418', 'desc');
+(6, '$2a$10$AF/3/7aVlFk4Ypqk7Te/uuLGhtXPmrkESNn3.kzcCoRDW8FRGBRu2', 'mikolaj'),
+(8, '$2a$10$EQU7/.muQM/e1aZtw.FVK.UAk/4SsRGeUIzLSsplrPi/JnAYHF8V2', 'patryk');
 
 -- --------------------------------------------------------
 
@@ -53,20 +51,82 @@ INSERT INTO `admin_keys` (`key_id`, `value`, `description`) VALUES
 --
 
 DROP TABLE IF EXISTS `api_keys`;
-CREATE TABLE IF NOT EXISTS `api_keys` (
-  `key_id` int NOT NULL AUTO_INCREMENT,
-  `value` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`key_id`),
-  UNIQUE KEY `unique_value` (`value`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `api_keys` (
+  `key_id` int NOT NULL,
+  `value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Zrzut danych tabeli `api_keys`
 --
 
 INSERT INTO `api_keys` (`key_id`, `value`, `description`) VALUES
-(1, 'ca3bdabb-b559-41ca-9e96-2c27d6199017', 'test');
+(4, '$2a$10$uUvJtEEewxJsdUvI5kE0Iuvcv8MeixlfMML.Jx0XicXKT2AtMHP32', 'mobile app'),
+(5, '$2a$10$VuoisZPoCWNBXtdQEEGQXO.T4SK1mQGXeA6JSM1KW4MUQ.JSuy7C2', 'web app');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `bug_reports`
+--
+
+DROP TABLE IF EXISTS `bug_reports`;
+CREATE TABLE `bug_reports` (
+  `report_id` int NOT NULL,
+  `user_groups` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `issued_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `events`
+--
+
+DROP TABLE IF EXISTS `events`;
+CREATE TABLE `events` (
+  `event_id` int NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `type` int NOT NULL,
+  `start_date` datetime NOT NULL,
+  `end_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `events_superior_group`
+--
+
+DROP TABLE IF EXISTS `events_superior_group`;
+CREATE TABLE `events_superior_group` (
+  `row_id` int NOT NULL,
+  `event_id` int NOT NULL,
+  `superior_group_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `event_types`
+--
+
+DROP TABLE IF EXISTS `event_types`;
+CREATE TABLE `event_types` (
+  `event_type_id` int NOT NULL,
+  `name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Zrzut danych tabeli `event_types`
+--
+
+INSERT INTO `event_types` (`event_type_id`, `name`) VALUES
+(2, 'Academic calendar'),
+(3, 'Day off');
 
 -- --------------------------------------------------------
 
@@ -75,29 +135,13 @@ INSERT INTO `api_keys` (`key_id`, `value`, `description`) VALUES
 --
 
 DROP TABLE IF EXISTS `exams`;
-CREATE TABLE IF NOT EXISTS `exams` (
-  `exam_id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+CREATE TABLE `exams` (
+  `exam_id` int NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `exam_date` datetime NOT NULL,
-  `exam_type_id` int NOT NULL,
-  PRIMARY KEY (`exam_id`),
-  KEY `exam_type_id_idx` (`exam_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Zrzut danych tabeli `exams`
---
-
-INSERT INTO `exams` (`exam_id`, `title`, `description`, `exam_date`, `exam_type_id`) VALUES
-(2, 'Egzamin końcowy z programowania', 'Egzamin pisemny i praktyczny', '2025-01-20 09:00:00', 2),
-(3, 'Projekt z baz danych', 'Oddanie projektu grupowego', '2025-06-15 23:59:00', 3),
-(4, 'Kolokwium z fizyki', 'Druga część materiału: mechanika', '2025-11-05 12:00:00', 1),
-(5, 'Egzamin końcowy z ekonomii', 'Egzamin pisemny testowy', '2025-02-10 08:30:00', 2),
-(6, 'Projekt z systemów operacyjnych', 'Prezentacja projektu semestralnego', '2025-06-25 14:00:00', 3),
-(7, 'test authorities', 'do usuniecia', '2027-09-01 09:00:00', 3),
-(8, 'test authorities', 'do usuniecia', '2027-09-01 09:00:00', 3),
-(9, 'test authorities', 'do usunieciaaaaa', '2027-09-01 09:00:00', 3);
+  `exam_type_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -106,83 +150,32 @@ INSERT INTO `exams` (`exam_id`, `title`, `description`, `exam_date`, `exam_type_
 --
 
 DROP TABLE IF EXISTS `exams_groups`;
-CREATE TABLE IF NOT EXISTS `exams_groups` (
-  `exam_group_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `exams_groups` (
+  `exam_group_id` int NOT NULL,
   `exam_id` int NOT NULL,
-  `group_id` int NOT NULL,
-  PRIMARY KEY (`exam_group_id`),
-  KEY `exam_id_idx` (`exam_id`),
-  KEY `group_id_idx` (`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Zrzut danych tabeli `exams_groups`
---
-
-INSERT INTO `exams_groups` (`exam_group_id`, `exam_id`, `group_id`) VALUES
-(9, 2, 12),
-(10, 2, 13),
-(11, 2, 14),
-(12, 3, 15),
-(13, 3, 16),
-(14, 3, 17),
-(15, 4, 9),
-(16, 4, 10),
-(17, 5, 12),
-(18, 5, 13),
-(19, 6, 15),
-(20, 6, 16),
-(21, 7, 21),
-(22, 7, 22),
-(23, 8, 9),
-(24, 9, 9);
+  `group_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `exam_type`
+-- Struktura tabeli dla tabeli `exam_types`
 --
 
-DROP TABLE IF EXISTS `exam_type`;
-CREATE TABLE IF NOT EXISTS `exam_type` (
-  `exam_type_id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`exam_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `exam_types`;
+CREATE TABLE `exam_types` (
+  `exam_type_id` int NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Zrzut danych tabeli `exam_type`
+-- Zrzut danych tabeli `exam_types`
 --
 
-INSERT INTO `exam_type` (`exam_type_id`, `name`) VALUES
+INSERT INTO `exam_types` (`exam_type_id`, `name`) VALUES
 (1, 'Kolokwium'),
 (2, 'Egzamin końcowy'),
 (3, 'Projekt');
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `general_group`
---
-
-DROP TABLE IF EXISTS `general_group`;
-CREATE TABLE IF NOT EXISTS `general_group` (
-  `general_group_id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`general_group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Zrzut danych tabeli `general_group`
---
-
-INSERT INTO `general_group` (`general_group_id`, `name`) VALUES
-(17, '11A'),
-(18, '12E'),
-(19, '13K'),
-(20, '14M'),
-(21, '12K'),
-(22, '11K');
 
 -- --------------------------------------------------------
 
@@ -191,11 +184,10 @@ INSERT INTO `general_group` (`general_group_id`, `name`) VALUES
 --
 
 DROP TABLE IF EXISTS `moderators`;
-CREATE TABLE IF NOT EXISTS `moderators` (
-  `moderator_id` binary(16) NOT NULL,
+CREATE TABLE `moderators` (
+  `moderator_id` varchar(36) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` varchar(50) NOT NULL,
-  PRIMARY KEY (`moderator_id`)
+  `role` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -203,35 +195,68 @@ CREATE TABLE IF NOT EXISTS `moderators` (
 --
 
 INSERT INTO `moderators` (`moderator_id`, `password`, `role`) VALUES
-(0x10b4cd4f840445ba9fff930fda8229c7, '$2a$10$zjcQISWSqPpMWQv99XWneOaHWiqTRhiXUJq5FT8iXbET.3hZfO0GO', 'MODERATOR'),
-(0x561e6e496eab4e9e965ac6c8ffe24293, '$2a$10$puIitW1sPdjyqCs2nbpco.wRAcGOpuWiOj6iQ0siFKOBaKmIS9ghK', 'MODERATOR'),
-(0x9e39a89631924bd6a38b0ee6e56be221, '$2a$10$e6H5n6xu4NymerBHqvO42OhUVg3aOHPpCPo0.TSDH1b/graC5FomC', 'MODERATOR'),
-(0xd45dd77e68ac45908a12340b35d04b6c, '$2a$10$k6aoa0OU8RKbCA4WHu4yDuMOZFmxP2zeX7Cjw3GmLVml2dDm6QGEG', 'MODERATOR');
+('20caa1cc-4897-471d-a7cf-aa763d569b2e', '$2a$10$DGguCtLbZXE1gj6P2uns8OLNmB5s3ok50RZTBNMkVhgpLreU5/1um', 'MODERATOR');
 
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `otp_codes`
+-- Struktura tabeli dla tabeli `moderator_refresh_tokens`
 --
 
-DROP TABLE IF EXISTS `otp_codes`;
-CREATE TABLE IF NOT EXISTS `otp_codes` (
-  `otp_code_id` int NOT NULL AUTO_INCREMENT,
-  `code` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `expire` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `general_group_id` int NOT NULL,
-  PRIMARY KEY (`otp_code_id`),
-  KEY `general_group_id_idx` (`general_group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `moderator_refresh_tokens`;
+CREATE TABLE `moderator_refresh_tokens` (
+  `token_id` bigint NOT NULL,
+  `token` char(64) NOT NULL,
+  `moderator_id` varchar(36) NOT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expires` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
 
 --
--- Zrzut danych tabeli `otp_codes`
+-- Struktura tabeli dla tabeli `refresh_token`
 --
 
-INSERT INTO `otp_codes` (`otp_code_id`, `code`, `expire`, `general_group_id`) VALUES
-(2, 'XYZ789', '2025-08-18 20:51:40', 18),
-(3, 'QWE456', '2025-08-18 21:51:40', 19),
-(4, 'JKL999', '2025-08-18 22:51:40', 20);
+DROP TABLE IF EXISTS `refresh_token`;
+CREATE TABLE `refresh_token` (
+  `token_id` bigint NOT NULL,
+  `token` char(64) NOT NULL,
+  `user_id` int NOT NULL,
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expires_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `representatives`
+--
+
+DROP TABLE IF EXISTS `representatives`;
+CREATE TABLE `representatives` (
+  `representative_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `superior_group_id` int NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `student_codes`
+--
+
+DROP TABLE IF EXISTS `student_codes`;
+CREATE TABLE `student_codes` (
+  `student_code_id` int NOT NULL,
+  `code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `expire` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `superior_group_id` int NOT NULL,
+  `usage_count` int NOT NULL,
+  `usage_limit` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -240,72 +265,298 @@ INSERT INTO `otp_codes` (`otp_code_id`, `code`, `expire`, `general_group_id`) VA
 --
 
 DROP TABLE IF EXISTS `student_groups`;
-CREATE TABLE IF NOT EXISTS `student_groups` (
-  `group_id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`group_id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Zrzut danych tabeli `student_groups`
---
-
-INSERT INTO `student_groups` (`group_id`, `name`) VALUES
-(22, '11A'),
-(9, '11A1'),
-(10, '11A2'),
-(12, '12E1'),
-(13, '12E2'),
-(14, '12E3'),
-(15, '13K1'),
-(16, '13K2'),
-(17, '13K3'),
-(18, '14M1'),
-(21, 'P01');
+CREATE TABLE `student_groups` (
+  `group_id` int NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `users`
+-- Struktura tabeli dla tabeli `superior_groups`
 --
 
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE IF NOT EXISTS `users` (
-  `user_id` int NOT NULL AUTO_INCREMENT,
-  `general_group_id` int NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `role` enum('ADMIN','REPRESENTATIVE') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'REPRESENTATIVE',
-  PRIMARY KEY (`user_id`),
-  KEY `general_group_id_idx` (`general_group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `superior_groups`;
+CREATE TABLE `superior_groups` (
+  `superior_group_id` int NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
 
 --
--- Zrzut danych tabeli `users`
+-- Struktura tabeli dla tabeli `user_refresh_tokens`
 --
 
-INSERT INTO `users` (`user_id`, `general_group_id`, `email`, `is_active`, `role`) VALUES
-(1, 17, 'user11a@example.com', 1, 'REPRESENTATIVE'),
-(2, 18, 'user12e@example.com', 1, 'REPRESENTATIVE'),
-(3, 19, 'user13k@example.com', 1, 'REPRESENTATIVE'),
-(4, 20, 'user14m@example.com', 1, 'ADMIN'),
-(5, 21, 'email@ex.com', 0, 'REPRESENTATIVE'),
-(6, 21, 'email@ex.com', 0, 'REPRESENTATIVE'),
-(7, 21, 'email@ex.com', 0, 'REPRESENTATIVE'),
-(8, 21, 'email@ex.com', 0, 'REPRESENTATIVE'),
-(9, 21, 'email@ex.com', 0, 'REPRESENTATIVE'),
-(10, 22, 'email@ex.com', 0, 'REPRESENTATIVE');
+DROP TABLE IF EXISTS `user_refresh_tokens`;
+CREATE TABLE `user_refresh_tokens` (
+  `token_id` bigint NOT NULL,
+  `token` char(64) NOT NULL,
+  `representative_id` varchar(36) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expires_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `utils_kv`
+--
+
+DROP TABLE IF EXISTS `utils_kv`;
+CREATE TABLE `utils_kv` (
+  `id` int NOT NULL,
+  `property_key` varchar(191) NOT NULL,
+  `property_value` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `value_type` varchar(20) NOT NULL DEFAULT 'string',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Zrzut danych tabeli `utils_kv`
+--
+
+INSERT INTO `utils_kv` (`id`, `property_key`, `property_value`, `value_type`, `updated_at`) VALUES
+(16, 'endOfSemester', '2026-02-28', 'date', '2025-10-20 18:26:50');
+
+--
+-- Indeksy dla zrzutów tabel
+--
+
+--
+-- Indeksy dla tabeli `admin_keys`
+--
+ALTER TABLE `admin_keys`
+  ADD PRIMARY KEY (`key_id`),
+  ADD UNIQUE KEY `unique_value` (`value`);
+
+--
+-- Indeksy dla tabeli `api_keys`
+--
+ALTER TABLE `api_keys`
+  ADD PRIMARY KEY (`key_id`),
+  ADD UNIQUE KEY `unique_value` (`value`);
+
+--
+-- Indeksy dla tabeli `bug_reports`
+--
+ALTER TABLE `bug_reports`
+  ADD PRIMARY KEY (`report_id`);
+
+--
+-- Indeksy dla tabeli `events`
+--
+ALTER TABLE `events`
+  ADD PRIMARY KEY (`event_id`),
+  ADD KEY `events_types` (`type`) USING BTREE;
+
+--
+-- Indeksy dla tabeli `events_superior_group`
+--
+ALTER TABLE `events_superior_group`
+  ADD PRIMARY KEY (`row_id`),
+  ADD KEY `index_superior_group` (`superior_group_id`) USING BTREE,
+  ADD KEY `index_event` (`event_id`);
+
+--
+-- Indeksy dla tabeli `event_types`
+--
+ALTER TABLE `event_types`
+  ADD PRIMARY KEY (`event_type_id`);
+
+--
+-- Indeksy dla tabeli `exams`
+--
+ALTER TABLE `exams`
+  ADD PRIMARY KEY (`exam_id`),
+  ADD KEY `exam_type_id_idx` (`exam_type_id`);
+
+--
+-- Indeksy dla tabeli `exams_groups`
+--
+ALTER TABLE `exams_groups`
+  ADD PRIMARY KEY (`exam_group_id`),
+  ADD KEY `exam_id_idx` (`exam_id`),
+  ADD KEY `group_id_idx` (`group_id`);
+
+--
+-- Indeksy dla tabeli `exam_types`
+--
+ALTER TABLE `exam_types`
+  ADD PRIMARY KEY (`exam_type_id`);
+
+--
+-- Indeksy dla tabeli `moderators`
+--
+ALTER TABLE `moderators`
+  ADD PRIMARY KEY (`moderator_id`);
+
+--
+-- Indeksy dla tabeli `moderator_refresh_tokens`
+--
+ALTER TABLE `moderator_refresh_tokens`
+  ADD PRIMARY KEY (`token_id`),
+  ADD UNIQUE KEY `token` (`token`),
+  ADD KEY `idx_moderator_id` (`moderator_id`);
+
+--
+-- Indeksy dla tabeli `representatives`
+--
+ALTER TABLE `representatives`
+  ADD PRIMARY KEY (`representative_id`),
+  ADD KEY `general_group_id_idx` (`superior_group_id`);
+
+--
+-- Indeksy dla tabeli `student_codes`
+--
+ALTER TABLE `student_codes`
+  ADD PRIMARY KEY (`student_code_id`),
+  ADD KEY `general_group_id_idx` (`superior_group_id`);
+
+--
+-- Indeksy dla tabeli `student_groups`
+--
+ALTER TABLE `student_groups`
+  ADD PRIMARY KEY (`group_id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indeksy dla tabeli `superior_groups`
+--
+ALTER TABLE `superior_groups`
+  ADD PRIMARY KEY (`superior_group_id`);
+
+--
+-- Indeksy dla tabeli `user_refresh_tokens`
+--
+ALTER TABLE `user_refresh_tokens`
+  ADD PRIMARY KEY (`token_id`),
+  ADD UNIQUE KEY `token` (`token`),
+  ADD KEY `idx_representative_id` (`representative_id`);
+
+--
+-- Indeksy dla tabeli `utils_kv`
+--
+ALTER TABLE `utils_kv`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `property_key` (`property_key`);
+
+--
+-- AUTO_INCREMENT dla zrzuconych tabel
+--
+
+--
+-- AUTO_INCREMENT dla tabeli `admin_keys`
+--
+ALTER TABLE `admin_keys`
+  MODIFY `key_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT dla tabeli `api_keys`
+--
+ALTER TABLE `api_keys`
+  MODIFY `key_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT dla tabeli `bug_reports`
+--
+ALTER TABLE `bug_reports`
+  MODIFY `report_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT dla tabeli `events`
+--
+ALTER TABLE `events`
+  MODIFY `event_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT dla tabeli `events_superior_group`
+--
+ALTER TABLE `events_superior_group`
+  MODIFY `row_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT dla tabeli `event_types`
+--
+ALTER TABLE `event_types`
+  MODIFY `event_type_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT dla tabeli `exams`
+--
+ALTER TABLE `exams`
+  MODIFY `exam_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT dla tabeli `exams_groups`
+--
+ALTER TABLE `exams_groups`
+  MODIFY `exam_group_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT dla tabeli `exam_types`
+--
+ALTER TABLE `exam_types`
+  MODIFY `exam_type_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT dla tabeli `moderator_refresh_tokens`
+--
+ALTER TABLE `moderator_refresh_tokens`
+  MODIFY `token_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT dla tabeli `student_codes`
+--
+ALTER TABLE `student_codes`
+  MODIFY `student_code_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT dla tabeli `student_groups`
+--
+ALTER TABLE `student_groups`
+  MODIFY `group_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT dla tabeli `superior_groups`
+--
+ALTER TABLE `superior_groups`
+  MODIFY `superior_group_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- AUTO_INCREMENT dla tabeli `user_refresh_tokens`
+--
+ALTER TABLE `user_refresh_tokens`
+  MODIFY `token_id` bigint NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT dla tabeli `utils_kv`
+--
+ALTER TABLE `utils_kv`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Ograniczenia dla zrzutów tabel
 --
 
 --
+-- Ograniczenia dla tabeli `events`
+--
+ALTER TABLE `events`
+  ADD CONSTRAINT `events_ibfk_1` FOREIGN KEY (`type`) REFERENCES `event_types` (`event_type_id`);
+
+--
+-- Ograniczenia dla tabeli `events_superior_group`
+--
+ALTER TABLE `events_superior_group`
+  ADD CONSTRAINT `events_superior_group_ibfk_1` FOREIGN KEY (`superior_group_id`) REFERENCES `superior_groups` (`superior_group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `events_superior_group_ibfk_2` FOREIGN KEY (`event_id`) REFERENCES `events` (`event_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Ograniczenia dla tabeli `exams`
 --
 ALTER TABLE `exams`
-  ADD CONSTRAINT `exams_ibfk_1` FOREIGN KEY (`exam_type_id`) REFERENCES `exam_type` (`exam_type_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `exams_ibfk_1` FOREIGN KEY (`exam_type_id`) REFERENCES `exam_types` (`exam_type_id`) ON DELETE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `exams_groups`
@@ -315,16 +566,28 @@ ALTER TABLE `exams_groups`
   ADD CONSTRAINT `exams_groups_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `student_groups` (`group_id`) ON DELETE CASCADE;
 
 --
--- Ograniczenia dla tabeli `otp_codes`
+-- Ograniczenia dla tabeli `moderator_refresh_tokens`
 --
-ALTER TABLE `otp_codes`
-  ADD CONSTRAINT `otp_codes_ibfk_1` FOREIGN KEY (`general_group_id`) REFERENCES `general_group` (`general_group_id`) ON DELETE CASCADE;
+ALTER TABLE `moderator_refresh_tokens`
+  ADD CONSTRAINT `moderator_refresh_tokens_ibfk_1` FOREIGN KEY (`moderator_id`) REFERENCES `moderators` (`moderator_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Ograniczenia dla tabeli `users`
+-- Ograniczenia dla tabeli `representatives`
 --
-ALTER TABLE `users`
-  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`general_group_id`) REFERENCES `general_group` (`general_group_id`) ON DELETE CASCADE;
+ALTER TABLE `representatives`
+  ADD CONSTRAINT `representatives_ibfk_1` FOREIGN KEY (`superior_group_id`) REFERENCES `superior_groups` (`superior_group_id`) ON DELETE CASCADE;
+
+--
+-- Ograniczenia dla tabeli `student_codes`
+--
+ALTER TABLE `student_codes`
+  ADD CONSTRAINT `student_codes_ibfk_1` FOREIGN KEY (`superior_group_id`) REFERENCES `superior_groups` (`superior_group_id`) ON DELETE CASCADE;
+
+--
+-- Ograniczenia dla tabeli `user_refresh_tokens`
+--
+ALTER TABLE `user_refresh_tokens`
+  ADD CONSTRAINT `user_refresh_tokens_ibfk_1` FOREIGN KEY (`representative_id`) REFERENCES `representatives` (`representative_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,15 +1,19 @@
-# 🚀 PKWM App Backend
+# ⚙ Trybik — Backend
+
+Trybik (Server) – timetable, exam calendar & ECTS calculator for students of Mechanical Engineering @ Cracow University of Technology
 
 ---
 
 ## 📦 Tech Stack
 
-- **Backend Framework:** [Java Spring](https://spring.io/)
-- **Language:** [Java](https://www.java.com/pl/)
-- **Database:** [MySQL](https://www.mysql.com/)
-- **Authentication:** [JWT](https://jwt.io/)
-- **Project Manager:** [Maven](https://maven.apache.org/)
-- **Containerization:** [Docker](https://www.docker.com/)
+- Framework: Java Spring Boot 3.5+
+- Language: Java 21
+- Database: MySQL (H2 used for tests)
+- Authentication: JWT (JSON Web Tokens)
+- API Docs: Swagger / OpenAPI
+- Caching: Caffeine
+- Build / Project: Maven (mvn / ./mvnw)
+- Containerization: Docker
 
 ---
 
@@ -17,83 +21,123 @@
 
 ### 1. Clone the repository
 
-```shell
-docker pull ghcr.io/pkttteam/pkwmtt-backend:latest
+```bash
+git clone https://github.com/TrybikDevelopers/Trybik-backend.git
+cd Trybik-backend
 ```
 
-### 2. Run
+### 2. Build the project
 
-```shell
-docker run -d --name [image_name] -p 8080:8080 ghcr.io/pkttteam/pkwmttt-backend:[PACKAGE_NUMBER]
+If the Maven wrapper is present:
+
+```bash
+./mvnw clean package
+```
+
+Or with your system Maven:
+
+```bash
+mvn clean package
+```
+
+### 3. Run with Docker
+
+Build and run locally:
+
+```bash
+docker build -t trybik-backend .
+docker run -d --name trybik-backend -p 8080:8080 trybik-backend
+```
+
+If an official container image is published (check the Releases or container registry), you can pull and run:
+
+```bash
+docker pull ghcr.io/trybikdevelopers/trybik-backend:latest
+docker run -d --name trybik-backend -p 8080:8080 ghcr.io/trybikdevelopers/trybik-backend:latest
 ```
 
 ---
 
 ## 📮 API Overview
 
-The backend exposes various RESTful endpoints to manage:
+This backend exposes RESTful endpoints for:
 
-- Timetable:
-    - Schedule for specific general group with optional filters (K,L,P groups)
-    - List of available general groups (f.e. 12K1)
-    - List of subjects hours
-    - List of available KLP groups for specified general group (f.e. K01)
+- Timetable management (by study group, with filters)
+- Exam calendar and exam types
+- ECTS calculator
+- Group and subject listings
+- (Other endpoints may exist — check the controller packages / OpenAPI docs)
 
-The API follows standard REST conventions and uses JWT for authentication. Headers typically include:
+## Detailed API docs
+For implementation details, examples and payload shapes see the module-level API references below:
+
+- Timetable — Detailed docs: [TIMETABLE.MD](src/main/java/org/pkwmtt/timetable/TIMETABLE.MD)
+- Exam calendar — Detailed docs: [EXAMCALENDAR.MD](src/main/java/org/pkwmtt/calendar/EXAMCALENDAR.MD)
+- Moderator — Detailed docs: [MODERATOR.MD](src/main/java/org/pkwmtt/moderator/MODERATOR.MD)
+- Events — Detailed docs: [EVENTS.MD](src/main/java/org/pkwmtt/calendar/EVENTS.MD)
+
+Authentication
+- Endpoints are protected using JWT tokens.
+- Example header:
 
 ```
 Authorization: Bearer <token>
 Content-Type: application/json
 ```
 
-> ⚠️ API documentation with Swagger may be available [here](http://localhost:8080/swagger-ui/index.html) if enabled in
-> the application.
+API documentation (Swagger UI / OpenAPI) is usually available at:
+`http://localhost:8080/swagger-ui/index.html` or `http://localhost:8080/v3/api-docs` (if Swagger/OpenAPI is enabled in configuration).
 
 ---
 
 ## 🧪 Testing
 
-```shell
+Run unit and integration tests:
+
+```bash
+./mvnw test
+# or
 mvn test
 ```
+
+The project may use H2 for tests — check test configuration files for details.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Follow these steps:
+We welcome contributions!
 
 1. Fork the repository
-2. Create a new branch: `git checkout -b feature/your-feature-name`
-3. Make your changes
-4. Commit and push: `git commit -m "feat: add new feature" && git push`
-5. Submit a pull request 🚀
+2. Create a new branch: `git checkout -b feature/your-feature`
+3. Make your changes and add tests where appropriate
+4. Commit and push:
+   ```bash
+   git commit -m "feat: short description"
+   git push origin feature/your-feature
+   ```
+5. Open a pull request against the main branch and describe your changes
+
+Please follow the existing code style and include tests for new behavior when possible.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **MIT License**. See the [LICENSE](./LICENSE) file for details.
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
 
 ---
 
-## 💬 Contact
+## 💬 Contact / Support
 
-For questions, suggestions, or collaboration:
+- Issues: https://github.com/TrybikDevelopers/Trybik-backend/issues
+- Organization: https://github.com/TrybikDevelopers
+- Email: support@trybik.app
 
-- GitHub Issues: [Submit here](https://github.com/PKWMApp/PKWMTT-backend/issues)
-- Team: [@PKWMApp](https://github.com/PKWMApp
-  )
+If you have questions about API usage or want to report bugs, please open an issue with reproduction steps and relevant logs.
 
 ---
 
 ## 🌐 Related Projects
 
----
-
-## 📸 Screenshots (Optional)
-
----
-
-
-
+- Frontend / mobile apps — check the organization repositories for matching frontend projects.

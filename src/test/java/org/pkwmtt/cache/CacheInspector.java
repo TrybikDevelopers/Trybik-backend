@@ -1,5 +1,6 @@
 package org.pkwmtt.cache;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import org.pkwmtt.timetable.TimetableCacheService;
@@ -33,7 +34,7 @@ public class CacheInspector {
         return nativeCache.asMap();
     }
     
-    public String printAllEntries (String cacheName) {
+    public String printAllEntries (String cacheName) throws JsonProcessingException {
         service.getListOfHours();
         service.getGeneralGroupSchedule("12K1");
         service.getGeneralGroupsMap();

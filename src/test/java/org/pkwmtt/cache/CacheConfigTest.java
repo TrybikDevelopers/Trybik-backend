@@ -1,5 +1,6 @@
 package org.pkwmtt.cache;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ class CacheConfigTest extends TestConfig {
     }
     
     @Test
-    void testCacheKeyPresent_Schedule () {
+    void testCacheKeyPresent_Schedule () throws JsonProcessingException {
         //given
         
         //when

@@ -40,9 +40,11 @@ public class MailConfig {
         mailSender.setPassword(password);
         
         Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.transport.protocol", environment.getProperty("spring.mail.protocol", "smtp"));
+        // Respect properties from configuration (allows tests to disable STARTTLS for GreenMail)
+        props.put("mail.smtp.auth", environment.getProperty("spring.mail.properties.mail.smtp.auth", "false"));
+        props.put("mail.smtp.starttls.enable", environment.getProperty("spring.mail.properties.mail.smtp.starttls.enable", "false"));
+        props.put("mail.smtp.ssl.enable", environment.getProperty("spring.mail.properties.mail.smtp.ssl.enable", "false"));
         
         return mailSender;
     }

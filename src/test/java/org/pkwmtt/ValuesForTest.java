@@ -111,7 +111,7 @@ public interface ValuesForTest {
                            <tr>
                             <td class="nr">9</td>
                             <td class="g">14:30-15:15</td>
-                            <td class="l"><span class="p">PKM K04</span>-(N. <span class="p">#Pkm</span> <a href="s70.html" class="s">A227-n</a></td>
+                            <td class="l"><span class="p">WF (M) Ć-M</span>-(N. <span class="p">W1</span> <a href="s70.html" class="s">Hala2</a></td>
                             <td class="l"><span class="p">PPSystM K04</span>-(n. <span class="p">#Psm</span> <a href="s206.html" class="s">J209-n</a><br><span class="p">PPSystM K04</span>-(p. <span class="p">#PSm</span> <a href="s207.html" class="s">J209-p</a></td>
                             <td class="l">&nbsp;</td>
                             <td class="l"><span class="p">WspInfPM P04</span>-(N) <span class="p">#Wpm</span> <a href="s243.html" class="s">A338-n</a><br><span class="p">PSieciKP W</span>-(P) <span class="p">#PKP</span> <a href="s17.html" class="s">A437-p</a></td>
@@ -129,7 +129,7 @@ public interface ValuesForTest {
                            <tr>
                             <td class="nr">11</td>
                             <td class="g">16:15-17:00</td>
-                            <td class="l"><span class="p">PrSteroP L04</span>-(N. <span class="p">#Psp</span> <a href="s184.html" class="s">G107-n</a><br><span class="p">PrSteroP L04</span>-(P. <span class="p">#psP</span> <a href="s185.html" class="s">G107-p</a></td>
+                            <td class="l"><span class="p">J niemiecki-(N)</span>-(N. <span class="p">#HE1</span> <a href="s184.html" class="s">A307-n</a><br><span class="p">PrSteroP L04</span>-(P. <span class="p">#psP</span> <a href="s185.html" class="s">G107-p</a></td>
                             <td class="l"><span style="font-size:85%"><span class="p">PPSystM K01-(n.</span> <a href="n111.html" class="n">GF</a> <a href="s204.html" class="s">J207.1-n</a></span><br><span style="font-size:85%"><span class="p">PPSystM K01-(p.</span> <a href="n112.html" class="n">FG</a> <a href="s205.html" class="s">J207.1-p</a></span></td>
                             <td class="l">&nbsp;</td>
                             <td class="l"><span class="p">PPSystM W</span>-(N) <span class="p">#PSM</span> <a href="s26.html" class="s">G18-n</a><br><span class="p">PAplikInt W</span>-(P) <span class="p">#PAI</span> <a href="s27.html" class="s">G18-p</a></td>
@@ -157,7 +157,7 @@ public interface ValuesForTest {
                             <td class="nr">14</td>
                             <td class="g">18:45-19:30</td>
                             <td class="l"><span style="font-size:85%"><span class="p">SocPsychP Ć-(N)</span> <a href="n169.html" class="n">JJ</a> <a href="s12.html" class="s">A409-n</a></span></td>
-                            <td class="l"><span style="font-size:85%"><span class="p">BazDan K01-(N)</span> <a href="n51.html" class="n">PB</a> <a href="s194.html" class="s">G117-n</a></span><br><span style="font-size:85%"><span class="p">BazDan K01-(P)</span> <a href="n52.html" class="n">BP</a> <a href="s195.html" class="s">G117-p</a></span></td>
+                            <td class="l"><span style="font-size:85%"><span class="p">J angielski-(n.</span> <a href="n51.html" class="n">#WG4</a> <a href="s194.html" class="s">J204-n</a></span><br><span style="font-size:85%"><span class="p">J angielski-(n.</span> <a href="n52.html" class="n">#WG4</a> <a href="s195.html" class="s">J204-n</a></span></td>
                             <td class="l">termin dodatkowy Katedra M7</td>
                             <td class="l">termin dodatkowy Katedra M7</td>
                             <td class="l">&nbsp;</td>

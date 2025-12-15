@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pkwmtt.ValuesForTest;
-import org.pkwmtt.examCalendar.enums.SubjectType;
+import org.pkwmtt.calendar.exams.enums.SubjectType;
 import org.pkwmtt.exceptions.dto.ErrorResponseDTO;
 import org.pkwmtt.timetable.dto.CustomSubjectFilterDTO;
 import org.pkwmtt.timetable.dto.SubjectDTO;
@@ -71,7 +71,7 @@ class TimetableControllerTest extends TestConfig {
               assertNotNull(response.getBody());
               var responseData = response.getBody().getData();
               assertEquals(5, responseData.size());
-              assertEquals(12, responseData.getFirst().getOdd().size());
+              assertEquals(14, responseData.getFirst().getOdd().size());
               assertEquals(6, responseData.getFirst().getEven().size());
           }
         );
@@ -84,14 +84,14 @@ class TimetableControllerTest extends TestConfig {
           "http://localhost:%s/pkwmtt/api/v1/timetables/12K1?sub=K01&sub=L01&sub=P01",
           port
         );
-        List<CustomSubjectFilterDTO> payload = List.of(new CustomSubjectFilterDTO("PKM", "12K1", "K04"));
+        List<CustomSubjectFilterDTO> payload = List.of(new CustomSubjectFilterDTO("Mechatro", "12K1", "P04"));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         var expectedObject = new SubjectDTO()
-          .setName("PKM")
-          .setType(SubjectType.COMPUTER_LABORATORY)
-          .setClassroom("A227")
-          .setRowId(8)
+          .setName("Mechatro")
+          .setType(SubjectType.PROJECT)
+          .setClassroom("K227")
+          .setRowId(2)
           .setCustom(true);
         
         //when
@@ -111,25 +111,38 @@ class TimetableControllerTest extends TestConfig {
           },
           () -> {
               assertNotNull(response.getBody());
+              
               var responseData = response.getBody().getData();
-              var subject_Monday_Nr10_Odd_Row8 = responseData
+              
+              var subjects_Monday_Nr3_Odd_Row2 = responseData
                 .getFirst()
                 .getOdd()
                 .stream()
-                .filter(item -> item.getRowId() == 8).toList().getFirst();
-              var subject_Monday_Nr11_Odd_Row9 = responseData
+                .filter(item -> item.getRowId() == 2)
+                .toList();
+              
+              var subjects_Monday_Nr4_Odd_Row3 = responseData
                 .getFirst()
                 .getOdd()
                 .stream()
-                .filter(item -> item.getRowId() == 9).toList().getFirst();
-              assertEquals(subject_Monday_Nr10_Odd_Row8, expectedObject);
-              assertEquals(subject_Monday_Nr11_Odd_Row9, expectedObject.setRowId(9));
-              var subject_Thursday_Nr3_Odd_Row2List = responseData
-                .get(3)
+                .filter(item -> item.getRowId() == 3)
+                .toList();
+              
+              assertTrue(subjects_Monday_Nr3_Odd_Row2.contains(expectedObject));
+              assertTrue(subjects_Monday_Nr4_Odd_Row3.contains(expectedObject.setRowId(3)));
+              
+              var subjects_Monday_Nr5_Odd_Row4 = responseData
+                .getFirst()
                 .getOdd()
                 .stream()
-                .filter(item -> item.getRowId() == 2).toList();
-              assertEquals(0, subject_Thursday_Nr3_Odd_Row2List.size());
+                .filter(item -> item.getRowId() == 4)
+                .toList();
+              
+              assertTrue(subjects_Monday_Nr5_Odd_Row4
+                           .stream()
+                           .filter(subject -> subject.getName().equals("Mechatro"))
+                           .toList()
+                           .isEmpty());
           }
         );
     }

@@ -1,5 +1,6 @@
 package org.pkwmtt.timetable;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -62,7 +63,7 @@ class TimetableCacheServiceTest extends TestConfig {
     
     
     @Test
-    public void shouldReturnGeneralGroupsMap () {
+    public void shouldReturnGeneralGroupsMap () throws JsonProcessingException {
         //given
         var expectedMap = Map.of(
           "11K2",
@@ -85,7 +86,7 @@ class TimetableCacheServiceTest extends TestConfig {
     }
     
     @Test
-    public void shouldGeneralGroupMapBePresentInCache () {
+    public void shouldGeneralGroupMapBePresentInCache () throws JsonProcessingException {
         //given
         var key = "generalGroupMap";
         var expectedValue = "{\"11K2\":\"plany/o8.html\",\"12K1\":\"plany/o25.html\",\"11A1\":\"plany/o1.html\",\"12K3\":\"plany/o27.html\",\"12K2\":\"plany/o26.html\"}";
@@ -105,7 +106,7 @@ class TimetableCacheServiceTest extends TestConfig {
     }
     
     @Test
-    public void shouldReturn12K1Schedule () {
+    public void shouldReturn12K1Schedule () throws JsonProcessingException {
         //given
         var generalGroupName = "12K1"; // get random general group
         
@@ -118,7 +119,7 @@ class TimetableCacheServiceTest extends TestConfig {
     }
     
     @Test
-    public void shouldRandomGeneralGroupScheduleBePresentInCache () {
+    public void shouldRandomGeneralGroupScheduleBePresentInCache () throws JsonProcessingException {
         //given
         String generalGroupName = "12K1"; // get random general group
         String key = "timetable_" + generalGroupName;

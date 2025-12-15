@@ -1,14 +1,8 @@
 package org.pkwmtt.timetable.dto;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Data
-@RequiredArgsConstructor
-@Getter
-public class CustomSubjectFilterDTO {
-    private final String name;
-    private final String generalGroup;
-    private final String subGroup;
+/**
+ * Data Transfer Object (DTO) representing a custom subject filter.
+ * This class contains the name of the subject, its general group, and its sub-group.
+ */
+public record CustomSubjectFilterDTO(String name, String generalGroup, String subGroup) {
 }

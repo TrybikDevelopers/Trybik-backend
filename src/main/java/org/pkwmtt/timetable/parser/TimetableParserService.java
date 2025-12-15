@@ -7,7 +7,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.pkwmtt.timetable.dto.DayOfWeekDTO;
 import org.pkwmtt.timetable.dto.SubjectDTO;
-import org.pkwmtt.examCalendar.enums.SubjectType;
+import org.pkwmtt.calendar.exams.enums.SubjectType;
 import org.pkwmtt.timetable.enums.TypeOfWeek;
 import org.springframework.stereotype.Service;
 
@@ -108,15 +108,25 @@ public class TimetableParserService {
                 
                 //Go every item in column
                 for (int itemId = 0; itemId < items.size() - 1; itemId += 2) {
-                    boolean notOdd;
                     String name = items.get(itemId).text();
                     String classroom = items.get(itemId + 1).text();
                     
-                    notOdd = isNameNotOdd(name);
-                    
                     SubjectDTO subject = buildSubject(name, classroom, rowId);
                     
-                    days.get(columnId).add(subject, notOdd ? TypeOfWeek.EVEN : TypeOfWeek.ODD);
+                    TypeOfWeek typeOfWeek;
+                    
+                   boolean notOdd = isNameNotOdd(name);
+                   boolean notEven = isNameNotEven(name);
+                   
+                   if (notOdd == notEven) {
+                       typeOfWeek = TypeOfWeek.BOTH;
+                   } else if (notOdd) {
+                       typeOfWeek = TypeOfWeek.EVEN;
+                   } else {
+                       typeOfWeek = TypeOfWeek.ODD;
+                   }
+                    
+                    days.get(columnId).add(subject, typeOfWeek);
                 }
             }
         }
@@ -290,5 +300,9 @@ public class TimetableParserService {
      */
     private boolean isNameNotOdd (String name) {
         return !name.contains("(N") && !name.contains("-(n");
+    }
+    
+    private boolean isNameNotEven (String name) {
+        return !name.contains("(P") && !name.contains("-(p");
     }
 }

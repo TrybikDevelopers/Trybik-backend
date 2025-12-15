@@ -10,6 +10,7 @@ services:
     restart: always
     volumes:
       - ./uploads:/app/uploads
+      - ./logs:/app/logs
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
   db:
