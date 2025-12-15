@@ -14,7 +14,12 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 
@@ -152,23 +157,56 @@ public class TimetableCacheService {
         }
     }
     
+//    /**
+//     * Fetches the HTML content of the specified URL using Jsoup.
+//     *
+//     * <p>This method performs a blocking HTTP GET request and returns the raw
+//     * HTML content as a String. Any IO-related error encountered while
+//     * connecting to or reading from the remote resource is translated into a
+//     * {@link WebPageContentNotAvailableException} to decouple callers from
+//     * low-level IO exceptions.</p>
+//     *
+//     * @param url the target URL to fetch HTML from
+//     * @return the HTML content of the page as a String
+//     * @throws WebPageContentNotAvailableException when an I/O error occurs while fetching the page
+//     */
+//    private static String fetchData (String url) throws WebPageContentNotAvailableException {
+//        try {
+//            return Jsoup.connect(url).get().html();
+//        } catch (IOException ioe) {
+//            throw new WebPageContentNotAvailableException();
+//        }
+//    }
+
     /**
-     * Fetches the HTML content of the specified URL using Jsoup.
-     *
-     * <p>This method performs a blocking HTTP GET request and returns the raw
-     * HTML content as a String. Any IO-related error encountered while
-     * connecting to or reading from the remote resource is translated into a
-     * {@link WebPageContentNotAvailableException} to decouple callers from
-     * low-level IO exceptions.</p>
-     *
+     * Temporary solution for issues with university certificate.
+     * Resolve problem by disabling certification verification
+     * Should be replaced with better solution in the future
      * @param url the target URL to fetch HTML from
      * @return the HTML content of the page as a String
      * @throws WebPageContentNotAvailableException when an I/O error occurs while fetching the page
      */
-    private static String fetchData (String url) throws WebPageContentNotAvailableException {
+//    FIXME: Replace with better solution
+    private static String fetchData(String url) throws WebPageContentNotAvailableException {
         try {
-            return Jsoup.connect(url).get().html();
-        } catch (IOException ioe) {
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() { return null; }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+            }};
+
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new SecureRandom());
+
+            return Jsoup.connect(url)
+                    .sslSocketFactory(sc.getSocketFactory())
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36")
+                    .timeout(10000)
+                    .get()
+                    .html();
+
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new WebPageContentNotAvailableException();
         }
     }
