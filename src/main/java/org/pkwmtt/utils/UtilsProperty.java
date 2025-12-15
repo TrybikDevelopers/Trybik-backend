@@ -2,6 +2,8 @@ package org.pkwmtt.utils;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
+
 import java.time.Instant;
 
 @Entity
@@ -10,6 +12,7 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 public class UtilsProperty {
 
     @Id

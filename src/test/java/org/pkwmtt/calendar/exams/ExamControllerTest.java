@@ -17,6 +17,8 @@ import org.pkwmtt.calendar.exams.repository.GroupRepository;
 import org.pkwmtt.security.authentication.authenticationToken.JwtAuthenticationToken;
 import org.pkwmtt.security.config.NoSecurityConfig;
 import org.pkwmtt.timetable.TimetableService;
+import org.pkwmtt.utils.UtilsProperty;
+import org.pkwmtt.utils.UtilsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -31,6 +33,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -69,6 +72,9 @@ class ExamControllerTest {
     @Autowired
     private GroupRepository groupRepository;
 
+    @Autowired
+    private UtilsRepository utilsRepository;
+
     @MockitoBean
     private TimetableService timetableService;
 
@@ -77,6 +83,7 @@ class ExamControllerTest {
         examRepository.deleteAll();
         examTypeRepository.deleteAll();
         groupRepository.deleteAll();
+        utilsRepository.deleteAll();
     }
 
     @BeforeEach
@@ -102,7 +109,8 @@ class ExamControllerTest {
     @Test
     @Transactional
     void addExamWithCorrectData() throws Exception {
-        //        given
+        //given
+        saveEndOfSemesterInDB();
         createExampleExamType("Project");
         RequestExamDto requestExamDtoRequest = createExampleExamDto("Project");
         String json = mapper.writeValueAsString(requestExamDtoRequest);
@@ -153,24 +161,25 @@ class ExamControllerTest {
     @Test
     @Transactional
     void addExamTwice() throws Exception {
-        //        given
+        //given
         createExampleExamType("Project");
         RequestExamDto requestExamDtoRequest = createExampleExamDto("Project");
 
         when(timetableService.getGeneralGroupList()).thenReturn(List.of("12K1", "12K2", "12K3"));
         when(timetableService.getAvailableSubGroups("12K2")).thenReturn(List.of("K04", "L04", "P04"));
 
-        //        when
+        //when
         assertPostRequest(status().isCreated(), requestExamDtoRequest);
         MvcResult result = assertPostRequest(status().isConflict(), requestExamDtoRequest);
-        //        then
+        //then
         assertResponseMessage("Exam already exists", result);
         assertEquals(1, examRepository.findAllByTitle(requestExamDtoRequest.getTitle()).size());
     }
 
     @Test
     void addExamWithBlankExamTitle() throws Exception {
-        //        given
+        //given
+        saveEndOfSemesterInDB();
         createExampleExamType("Project");
         RequestExamDto requestData = RequestExamDto
                 .builder()
@@ -180,16 +189,17 @@ class ExamControllerTest {
                 .generalGroups(Set.of("12K2"))
                 .subgroups(Set.of("L04"))
                 .build();
-        //        when
+        //when
         MvcResult result = assertPostRequest(status().isBadRequest(), requestData);
 
-        //        then
+        //then
         assertResponseMessage("title : must not be blank", result);
     }
 
     @Test
     void addExamWithBlankExamDescription() throws Exception {
-        //        given
+        //given
+        saveEndOfSemesterInDB();
         createExampleExamType("Project");
         RequestExamDto requestData = RequestExamDto
                 .builder()
@@ -202,7 +212,7 @@ class ExamControllerTest {
 
         when(timetableService.getGeneralGroupList()).thenReturn(List.of("12K1", "12K2", "12K3"));
         when(timetableService.getAvailableSubGroups("12K2")).thenReturn(List.of("K04", "L04", "P04"));
-        //        when
+        //when
         MvcResult result = assertPostRequest(status().isCreated(), requestData);
 
         String location = result.getResponse().getHeader("Location");
@@ -233,7 +243,7 @@ class ExamControllerTest {
 
     @Test
     void addExamWithBlankExamGroups() throws Exception {
-        //        given
+        //given
         createExampleExamType("Project");
         RequestExamDto requestData = RequestExamDto
                 .builder()
@@ -243,16 +253,16 @@ class ExamControllerTest {
                 .examType("Project")
                 .build();
 
-        //        when
+        //when
         MvcResult result = assertPostRequest(status().isBadRequest(), requestData);
 
-        //        then
+        //then
         assertResponseMessage("generalGroups : must not be empty", result);
     }
 
     @Test
     void addExamWithBlankGeneralGroups() throws Exception {
-        //      given
+        //given
         createExampleExamType("Project");
         RequestExamDto requestData = RequestExamDto
                 .builder()
@@ -264,16 +274,16 @@ class ExamControllerTest {
                 .subgroups(Set.of("L04"))
                 .build();
 
-        //        when
+        //when
         MvcResult result = assertPostRequest(status().isBadRequest(), requestData);
-        //        then
+        //then
         assertResponseMessage("generalGroups : must not be empty", result);
     }
 
     @Test
     @Transactional
     void addExamWithBlankSubgroups() throws Exception {
-        //      given
+        //given
         createExampleExamType("Project");
         RequestExamDto requestData = RequestExamDto
                 .builder()
@@ -288,11 +298,12 @@ class ExamControllerTest {
         when(timetableService.getGeneralGroupList()).thenReturn(List.of("12K1", "12K2", "12K3"));
         when(timetableService.getAvailableSubGroups("12K2")).thenReturn(List.of("K04", "L04", "P04"));
 
-        //        when
+        //when
         MvcResult result = assertPostRequest(status().isCreated(), requestData);
-        //        then
+        //then
         String location = result.getResponse().getHeader("Location");
-        @SuppressWarnings("DataFlowIssue") int id = Integer.parseInt(location.substring(location.lastIndexOf("/") + 1));
+        @SuppressWarnings("DataFlowIssue")
+        int id = Integer.parseInt(location.substring(location.lastIndexOf("/") + 1));
         Exam examResponse = examRepository.findById(id).orElseThrow();
 
         assertEquals("12K2", examResponse.getGroups().iterator().next().getName());
@@ -300,7 +311,7 @@ class ExamControllerTest {
 
     @Test
     void addExamWithMultipleGeneralGroupsAndSubgroups() throws Exception {
-        //      given
+        //given
         createExampleExamType("Project");
         RequestExamDto requestData = RequestExamDto
                 .builder()
@@ -315,35 +326,37 @@ class ExamControllerTest {
         when(timetableService.getGeneralGroupList()).thenReturn(List.of("12K1", "12K2", "12K3"));
         when(timetableService.getAvailableSubGroups("12K2")).thenReturn(List.of("K04", "L04", "P04"));
 
-        //        when
+        //when
         assertPostRequest(status().isCreated(), requestData);
 
     }
 
     @Test
     void addExamWithNullExamTypes() throws Exception {
-        //        given
+        //given
         RequestExamDto requestData = RequestExamDto
                 .builder()
                 .title("Math exam")
                 .description("first exam")
                 .date(LocalDateTime.now().plusDays(1))
-                .examType(null) // brak typu egzaminu
+                .examType(null) // no examType
                 .generalGroups(Set.of("12K2"))
                 .subgroups(Set.of("L04"))
-                //               no examType
+
                 .build();
 
-        //        when
+        saveEndOfSemesterInDB();
+
+        //when
         MvcResult result = assertPostRequest(status().isBadRequest(), requestData);
 
-        //        then
+        //then
         assertResponseMessage("examType : must not be null", result);
     }
 
     @Test
     void addExamWithNotFutureDate() throws Exception {
-        //        given
+        //given
         createExampleExamType("Project");
         RequestExamDto requestData = RequestExamDto
                 .builder()
@@ -354,16 +367,16 @@ class ExamControllerTest {
                 .generalGroups(Set.of("12K2"))
                 .subgroups(Set.of("L04"))
                 .build();
-        //        when
+        //when
         MvcResult result = assertPostRequest(status().isBadRequest(), requestData);
 
-        //        then
+        //then
         assertResponseMessage("date : Date must be in the future", result);
     }
 
     @Test
     void addExamWithEmptyStringExamTitle() throws Exception {
-        //        given
+        //given
         createExampleExamType("Project");
         RequestExamDto requestData = RequestExamDto
                 .builder()
@@ -375,16 +388,17 @@ class ExamControllerTest {
                 .subgroups(Set.of("L04"))
                 .build();
 
-        //        when
+        //when
         MvcResult result = assertPostRequest(status().isBadRequest(), requestData);
 
-        //        then
+        //then
         assertResponseMessage("title : must not be blank", result);
     }
 
     @Test
     void addExamWithTooLongExamTitle() throws Exception {
-        //        given
+        //given
+        saveEndOfSemesterInDB();
         createExampleExamType("Project");
         RequestExamDto requestData = RequestExamDto
                 .builder()
@@ -396,16 +410,17 @@ class ExamControllerTest {
                 .subgroups(Set.of("L04"))
                 .build();
 
-        //        when
+        //when
         MvcResult result = assertPostRequest(status().isBadRequest(), requestData);
 
-        //        then
+        //then
         assertResponseMessage("title : max size of field is 255", result);
     }
 
     @Test
     void addExamWithTooLongDescription() throws Exception {
-        //        given
+        //given
+        saveEndOfSemesterInDB();
         createExampleExamType("Project");
         RequestExamDto requestData = RequestExamDto
                 .builder()
@@ -417,16 +432,16 @@ class ExamControllerTest {
                 .subgroups(Set.of("L04"))
                 .build();
 
-        //        when
+        //when
         MvcResult result = assertPostRequest(status().isBadRequest(), requestData);
 
-        //        then
+        //then
         assertResponseMessage("description : max size of field is 255", result);
     }
 
     @Test
     void addExamWithNonExistingExamType() throws Exception {
-        //        given
+        //given
         createExampleExamType("Project");
         RequestExamDto requestData = RequestExamDto
                 .builder()
@@ -441,10 +456,10 @@ class ExamControllerTest {
         when(timetableService.getGeneralGroupList()).thenReturn(List.of("12K1", "12K2", "12K3"));
         when(timetableService.getAvailableSubGroups("12K2")).thenReturn(List.of("K04", "L04", "P04"));
 
-        //        when
+        //when
         MvcResult result = assertPostRequest(status().isBadRequest(), requestData);
 
-        //        then
+        //then
         assertResponseMessage("Invalid exam type NonExistingExamType", result);
     }
 
@@ -455,7 +470,8 @@ class ExamControllerTest {
     @Test
     @Transactional
     void modifyExamWithCorrectData() throws Exception {
-        //        given
+        //given
+        saveEndOfSemesterInDB();
         LocalDateTime date = LocalDateTime.now().plusDays(1);
         ExamType examType = createExampleExamType("Exam");
         Exam exam = createExampleExam(examType);
@@ -465,10 +481,10 @@ class ExamControllerTest {
         when(timetableService.getGeneralGroupList()).thenReturn(List.of("12K1", "12K2", "12K3"));
         when(timetableService.getAvailableSubGroups("12K2")).thenReturn(List.of("K04", "L04", "P04"));
 
-        //        when
+        //when
         assertPutRequest(status().isNoContent(), requestExamDto, id);
 
-        //        then
+        //then
         Exam responseExam = examRepository.findById(id).orElseThrow();
 
         Set<String> responseSubgroups = responseExam
@@ -491,7 +507,8 @@ class ExamControllerTest {
 
     @Test
     void modifyExamWithIncorrectExamId() throws Exception {
-        //        given
+        //given
+        saveEndOfSemesterInDB();
         ExamType examType = createExampleExamType("Exam");
         Exam exam = createExampleExam(examType);
         int id = examRepository.save(exam).getExamId();
@@ -499,10 +516,10 @@ class ExamControllerTest {
 
         int invalidId = Integer.MAX_VALUE - 10;
         assertNotEquals(invalidId, id);
-        //        when
+        //when
         MvcResult result = assertPutRequest(status().isNotFound(), requestExamDto, invalidId);
 
-        //        then
+        //then
         assertResponseMessage("No such element with id: " + (invalidId), result);
 
     }
@@ -511,32 +528,32 @@ class ExamControllerTest {
     //    <editor-fold desc="deleteExam">
     @Test
     void deleteExamWithCorrectArguments() throws Exception {
-        //        given
+        //given
         ExamType examType = createExampleExamType("Exam");
         Exam exam = createExampleExam(examType);
         int id = examRepository.save(exam).getExamId();
 
-        //        when
+        //when
         assertDeleteRequest(status().isNoContent(), id);
 
-        //        then
+        //then
         assertTrue(examRepository.findById(id).isEmpty());
     }
 
     @Test
     @Disabled("move to controller")
     void deleteNonExistingExam() throws Exception {
-        //        given
+        //given
         ExamType examType = createExampleExamType("Exam");
         Exam exam = createExampleExam(examType);
         int id = examRepository.save(exam).getExamId();
         int invalidId = Integer.MAX_VALUE - 10;
         assertNotEquals(invalidId, id);
 
-        //        when
+        //when
         MvcResult result = assertDeleteRequest(status().isNotFound(), invalidId);
 
-        //        then
+        //then
         assertTrue(examRepository.findById(id).isPresent());
         assertResponseMessage("No such element with id: " + (invalidId), result);
     }
@@ -548,16 +565,16 @@ class ExamControllerTest {
     @Test
     @Disabled("Endpoint are disabled")
     void getExamByIdWithCorrectId() throws Exception {
-        //        given
+        //given
         ExamType examType = createExampleExamType("Exam");
         Exam exam = createExampleExam(examType);
         int id = examRepository.save(exam).getExamId();
 
-        //        when
+        //when
         MvcResult result = assertGetByIdRequest(status().isOk(), id);
         JsonNode responseNode = mapper.readTree(result.getResponse().getContentAsString());
 
-        //        then
+        //then
         assertEquals(exam.getTitle(), responseNode.get("title").asText());
         assertEquals(exam.getDescription(), responseNode.get("description").asText());
         assertEquals(
@@ -574,17 +591,17 @@ class ExamControllerTest {
     @Test
     @Disabled("Endpoint are disabled")
     void getNonExistingExamById() throws Exception {
-        //        given
+        //given
         ExamType examType = createExampleExamType("Exam");
         Exam exam = createExampleExam(examType);
         int id = examRepository.save(exam).getExamId();
         int invalidId = Integer.MAX_VALUE - 10;
         assertNotEquals(invalidId, id);
 
-        //        when
+        //when
         MvcResult result = assertGetByIdRequest(status().isNotFound(), invalidId);
 
-        //        then
+        //then
         assertResponseMessage("No such element with id: " + (invalidId), result);
     }
 
@@ -592,16 +609,16 @@ class ExamControllerTest {
 
     @Test
     void getExamsWithGeneralGroups() throws Exception {
-        //        given
+        //given
         Exam exam1 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex1", Set.of("12K2")));
         Exam exam2 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex2", Set.of("12K2", "12K1")));
         Exam exam3 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex3", Set.of("12A2")));
         Exam exam4 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex4", Set.of("12K", "L04")));
 
-        //        when
+        //when
         MvcResult result = assertGetByGroupsRequest(status().isOk(), Set.of("12K2"));
 
-        //        then
+        //then
         JsonNode responseArray = mapper.readTree(result.getResponse().getContentAsString());
         assertEquals(2, responseArray.size());
 
@@ -618,17 +635,17 @@ class ExamControllerTest {
 
     @Test
     void getExamsWithSubgroups() throws Exception {
-        //        given
+        //given
         Exam exam1 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex1", Set.of("12K2")));
         Exam exam2 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex2", Set.of("12K2", "11K2")));
         Exam exam3 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex3", Set.of("12A2")));
         Exam exam4 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex4", Set.of("12K", "L04")));
         Exam exam5 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex5", Set.of("11K", "L04")));
 
-        //        when
+        //when
         MvcResult result = assertGetByGroupsRequest(status().isOk(), Set.of("11K2"), Set.of("L04", "P04", "K04"));
 
-        //        then
+        //then
         JsonNode responseArray = mapper.readTree(result.getResponse().getContentAsString());
         assertEquals(2, responseArray.size());
         assertTrue(responseArray.valueStream().anyMatch(e -> e.get("title").asText().equals(exam2.getTitle())));
@@ -640,7 +657,7 @@ class ExamControllerTest {
 
     @Test
     void getExamsWithSubgroupsUsingWholeYearIdentifier() throws Exception {
-        //        given
+        //given
         Exam exam1 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex1", Set.of("12K2")));
         Exam exam2 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex2", Set.of("12K2", "11K2")));
         Exam exam3 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex3", Set.of("12A2")));
@@ -648,10 +665,10 @@ class ExamControllerTest {
         Exam exam5 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex5", Set.of("11K", "L04")));
         Exam exam6 = examRepository.save(createAndSaveExamWithTitleAndGroups("ex6", Set.of("12K", "L04", "P04")));
 
-        //        when
+        //when
         MvcResult result = assertGetByGroupsRequest(status().isOk(), Set.of("12K"), Set.of("L04", "K04"));
 
-        //        then
+        //then
         JsonNode responseArray = mapper.readTree(result.getResponse().getContentAsString());
         assertEquals(2, responseArray.size());
         assertTrue(responseArray.valueStream().anyMatch(e -> e.get("title").asText().equals(exam4.getTitle())));
@@ -664,37 +681,39 @@ class ExamControllerTest {
 
     @Test
     void getExamsMultipleGeneralGroupsAndSubgroups() throws Exception {
-        //        when
+        //given
+        saveEndOfSemesterInDB();
+        //when
         MvcResult result = assertGetByGroupsRequest(
                 status().isBadRequest(),
                 Set.of("11K2", "12A1"),
                 Set.of("L04")
         );
-        //        then
+        //then
         assertResponseMessage("Invalid group identifier: ambiguous general groups for subgroups", result);
     }
 
     @Test
     void getExamsWithSwappedGroupNames() throws Exception {
-        //        when
+        //when
         MvcResult result = assertGetByGroupsRequest(
                 status().isBadRequest(),
                 Set.of("K04"),
                 Set.of("11K2", "12A1")
         );
-        //        then
+        //then
         assertResponseMessage("Specified general group [K04] doesn't exists", result);
     }
 
     @Test
     void getExamsWithInvalidSubgroup() throws Exception {
-        //        when
+        //when
         MvcResult result = assertGetByGroupsRequest(
                 status().isBadRequest(),
                 Set.of("12K1", "12K2"),
                 Set.of("11K2")
         );
-        //        then
+        //then
         assertResponseMessage("Specified sub group [11K2] doesn't exists", result);
     }
 
@@ -702,15 +721,15 @@ class ExamControllerTest {
 
     @Test
     void getExamTypesWhenExamTypesExists() throws Exception {
-        //        given
+        //given
         ExamType exam = createExampleExamType("Exam");
         ExamType project = createExampleExamType("Project");
 
-        //        when
+        //when
         MvcResult result = assertGetExamTypesRequest(status().isOk());
         JsonNode responseArray = mapper.readTree(result.getResponse().getContentAsString());
 
-        //        then
+        //then
         assertEquals(2, responseArray.size());
         assertTrue(responseArray.valueStream().anyMatch(e -> e.get("name").asText().equals(exam.getName())));
         assertTrue(responseArray.valueStream().anyMatch(e -> e.get("name").asText().equals(project.getName())));
@@ -718,8 +737,8 @@ class ExamControllerTest {
 
     @Test
     void getExamTypesWhenExamTypesNotExists() throws Exception {
-        //        given
-        //        when
+        //given
+        //when
         MvcResult result = mockMvc
                 .perform(MockMvcRequestBuilders.get("/pkwmtt/api/v1/exams/exam-types").contentType("application/json"))
                 .andDo(print())
@@ -727,7 +746,7 @@ class ExamControllerTest {
                 .andReturn();
         JsonNode responseArray = mapper.readTree(result.getResponse().getContentAsString());
 
-        //        then
+        //then
         assertEquals(0, responseArray.size());
     }
 
@@ -963,6 +982,16 @@ class ExamControllerTest {
                 .andDo(print())
                 .andExpect(expectedStatus)
                 .andReturn();
+    }
+
+
+    private void saveEndOfSemesterInDB() {
+        var endOfSemester = new UtilsProperty()
+                .setType("date")
+                .setKey("endOfSemester")
+                .setValue("2026-02-28")
+                .setUpdatedAt(Instant.now());
+        utilsRepository.save(endOfSemester);
     }
 
     //    </editor-fold>
