@@ -17,7 +17,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import static java.util.Objects.isNull;
 
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 @Profile("!test & !database") //Skip on tests
 @Deprecated

@@ -22,7 +22,7 @@ public class CorrectFutureDateValidator implements ConstraintValidator<CorrectFu
         }
 
         //TODO Date need to be extracted to f.e DB (this date is end of semester, maybe have to change to +1 month after end of semester)
-        if (time.isAfter(LocalDateTime.of(2026, 2, 22, 0, 0))) {
+        if (time.isAfter(LocalDateTime.of(2026, 7, 19, 0, 0))) {
             setMessage(constraintValidatorContext, "Date is too far in the future");
             return false;
         }
