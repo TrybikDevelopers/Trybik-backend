@@ -49,7 +49,8 @@ class StudentCodeServiceTest {
     static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
       .withConfiguration(GreenMailConfiguration.aConfig().withUser("test@localhost", "test"))
       .withPerMethodLifecycle(true);
-    
+
+    //    FIXME: test should not depend on external service
     @Test
     void shouldSendCorrectMailWithRepresentativePayload () {
         //given
@@ -69,7 +70,8 @@ class StudentCodeServiceTest {
             assertTrue(studentCodeRepository.existsByCode(code));
         });
     }
-    
+
+    //    FIXME: test should not depend on external service
     @Test
     void shouldAggregateFailuresAndContinueProcessingOtherRequests () throws Exception {
         // given: first request is invalid (subgroup provided -> causes WrongArgumentException),
@@ -117,7 +119,8 @@ class StudentCodeServiceTest {
         assertTrue(failures.stream().anyMatch(f -> f.superiorGroupName().equals("34L2")
           && f.exceptionClass().equals("WrongArgumentException")));
     }
-    
+
+//    FIXME: test should not depend on external service
     @Test
     void shouldGenerateTokenForRepresentative () throws Exception {
         //given
