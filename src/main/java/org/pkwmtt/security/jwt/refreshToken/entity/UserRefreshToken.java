@@ -2,7 +2,7 @@ package org.pkwmtt.security.jwt.refreshToken.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.pkwmtt.examCalendar.entity.Representative;
+import org.pkwmtt.calendar.exams.entity.Representative;
 
 import java.time.LocalDateTime;
 

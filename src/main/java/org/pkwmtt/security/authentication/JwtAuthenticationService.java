@@ -3,7 +3,7 @@ package org.pkwmtt.security.authentication;
 import io.jsonwebtoken.JwtException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.pkwmtt.examCalendar.entity.Representative;
+import org.pkwmtt.calendar.exams.entity.Representative;
 import org.pkwmtt.exceptions.InvalidRefreshTokenException;
 import org.pkwmtt.security.authentication.dto.JwtAuthenticationDto;
 import org.pkwmtt.security.authentication.dto.RefreshRequestDto;

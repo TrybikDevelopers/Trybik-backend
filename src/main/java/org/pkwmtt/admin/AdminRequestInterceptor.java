@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.InternalException;
-import org.pkwmtt.examCalendar.enums.Role;
+import org.pkwmtt.calendar.exams.enums.Role;
 import org.pkwmtt.exceptions.IncorrectApiKeyValue;
 import org.pkwmtt.exceptions.MissingHeaderException;
 import org.pkwmtt.security.apiKey.ApiKeyService;

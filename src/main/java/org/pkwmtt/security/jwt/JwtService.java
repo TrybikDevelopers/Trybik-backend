@@ -5,7 +5,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import org.pkwmtt.examCalendar.entity.Representative;
+import org.pkwmtt.calendar.exams.entity.Representative;
 import org.pkwmtt.exceptions.InvalidRefreshTokenException;
 import org.pkwmtt.security.jwt.refreshToken.entity.RefreshToken;
 import org.pkwmtt.security.jwt.utils.JwtUtils;

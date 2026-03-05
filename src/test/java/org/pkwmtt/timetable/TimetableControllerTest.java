@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pkwmtt.ValuesForTest;
-import org.pkwmtt.examCalendar.enums.SubjectType;
+import org.pkwmtt.calendar.exams.enums.SubjectType;
 import org.pkwmtt.exceptions.dto.ErrorResponseDTO;
 import org.pkwmtt.security.apiKey.ApiKeyService;
 import org.pkwmtt.timetable.dto.CustomSubjectFilterDTO;

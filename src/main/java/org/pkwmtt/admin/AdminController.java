@@ -1,7 +1,7 @@
 package org.pkwmtt.admin;
 
 import lombok.RequiredArgsConstructor;
-import org.pkwmtt.examCalendar.enums.Role;
+import org.pkwmtt.calendar.exams.enums.Role;
 import org.pkwmtt.reports.BugReportsService;
 import org.pkwmtt.reports.dto.BugReportDTO;
 import org.pkwmtt.security.apiKey.ApiKeyService;

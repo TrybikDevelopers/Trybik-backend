@@ -19,13 +19,13 @@ public class CacheConfig {
     @Bean
     public Caffeine<Object, Object> caffeineConfig () {
         return Caffeine.newBuilder()
-          .expireAfterWrite(24, TimeUnit.HOURS)
+          .expireAfterWrite(5, TimeUnit.DAYS)
           .recordStats();
     }
     
     @Bean
     public CacheManager cacheManager (Caffeine<Object, Object> caffeine) {
-        log.info("Initializing Caffeine Cache Manager with 24-hour expiration");
+        log.info("Initializing Caffeine Cache Manager with 5-days expiration");
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         // register caches used across the application so they are created upfront
         cacheManager.setCacheNames(List.of("timetables", "utils"));

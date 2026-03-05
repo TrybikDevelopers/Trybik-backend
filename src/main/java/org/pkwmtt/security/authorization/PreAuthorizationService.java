@@ -1,7 +1,7 @@
 package org.pkwmtt.security.authorization;
 
 import lombok.RequiredArgsConstructor;
-import org.pkwmtt.examCalendar.repository.ExamRepository;
+import org.pkwmtt.calendar.exams.repository.ExamRepository;
 import org.pkwmtt.exceptions.NoSuchElementWithProvidedIdException;
 import org.pkwmtt.security.authentication.authenticationToken.JwtAuthenticationToken;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.pkwmtt.examCalendar.mapper.GroupMapper.extractSuperiorGroup;
+import static org.pkwmtt.calendar.exams.mapper.GroupMapper.extractSuperiorGroup;
 
 //TODO: handle AccessDeniedException
 

@@ -20,9 +20,27 @@ public class ScheduledCache {
     private final CacheManager cacheManager;
     private final TimetableCacheService cacheService;
     
-    @Scheduled(cron = "0 0 0 * * *", zone = "Europe/Warsaw")
-    public void evictAllCachesAtMidnight () {
-        log.info("Scheduled cache eviction triggered - clearing caches");
+    @Scheduled(cron = "0 0 1 * * *", zone = "Europe/Warsaw")
+    public void refreshCachesAtOneAM () throws JsonProcessingException {
+        log.info("Scheduled cache refresh at 01:00 - attempting prepopulation before clearing caches");
+        
+        var generalGroups = cacheService.getGeneralGroupsMap().keySet();
+        var toRepopulate = new java.util.ArrayList<String>();
+        
+        // Pre-check: ensure all groups can be fetched successfully before clearing caches.
+        for (var generalGroup : generalGroups) {
+            try {
+                cacheService.getGeneralGroupSchedule(generalGroup);
+                toRepopulate.add(generalGroup);
+                log.debug("Fetched timetable for general group '{}' (pre-check)", generalGroup);
+            } catch (Exception ex) {
+                log.warn(
+                  "Prepopulation check failed for general group '{}', aborting cache refresh", generalGroup, ex);
+                return;
+            }
+        }
+        
+        // All pre-checks succeeded -> clear caches.
         for (String name : cacheManager.getCacheNames()) {
             var cache = cacheManager.getCache(name);
             if (cache != null) {
@@ -30,16 +48,9 @@ public class ScheduledCache {
                 log.debug("Cleared cache '{}'", name);
             }
         }
-    }
-    
-    @Scheduled(cron = "0 0 1 * * *", zone = "Europe/Warsaw")
-    public void prepopulateGeneralGroupCachesAtOneAM () throws JsonProcessingException {
-        log.info("Prepopulating general groups caches at 01:00 - saving timetables to caches");
-        prepopulateGeneralGroups();
-    }
-    
-    private void prepopulateGeneralGroups () throws JsonProcessingException {
-        for (var generalGroup : cacheService.getGeneralGroupsMap().keySet()) {
+        
+        // Repopulate caches.
+        for (var generalGroup : toRepopulate) {
             try {
                 cacheService.getGeneralGroupSchedule(generalGroup);
                 log.debug("Prepopulated timetable cache for general group '{}'", generalGroup);
@@ -47,8 +58,8 @@ public class ScheduledCache {
                 log.warn("Failed to prepopulate timetable cache for general group '{}'", generalGroup, ex);
             }
         }
+        log.info("Scheduled cache refresh at 01:00 completed");
     }
-    
     
 }
 

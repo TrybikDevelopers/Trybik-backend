@@ -68,6 +68,14 @@ This backend exposes RESTful endpoints for:
 - Group and subject listings
 - (Other endpoints may exist — check the controller packages / OpenAPI docs)
 
+## Detailed API docs
+For implementation details, examples and payload shapes see the module-level API references below:
+
+- Timetable — Detailed docs: [TIMETABLE.MD](src/main/java/org/pkwmtt/timetable/TIMETABLE.MD)
+- Exam calendar — Detailed docs: [EXAMCALENDAR.MD](src/main/java/org/pkwmtt/calendar/EXAMCALENDAR.MD)
+- Moderator — Detailed docs: [MODERATOR.MD](src/main/java/org/pkwmtt/moderator/MODERATOR.MD)
+- Events — Detailed docs: [EVENTS.MD](src/main/java/org/pkwmtt/calendar/EVENTS.MD)
+
 Authentication
 - Endpoints are protected using JWT tokens.
 - Example header:
@@ -125,7 +133,7 @@ This project is licensed under the MIT License. See [LICENSE](./LICENSE) for det
 - Issues: https://github.com/TrybikDevelopers/Trybik-backend/issues
 - Organization: https://github.com/TrybikDevelopers
 - Email: support@trybik.app
-- 
+
 If you have questions about API usage or want to report bugs, please open an issue with reproduction steps and relevant logs.
 
 ---
@@ -133,4 +141,3 @@ If you have questions about API usage or want to report bugs, please open an iss
 ## 🌐 Related Projects
 
 - Frontend / mobile apps — check the organization repositories for matching frontend projects.
-

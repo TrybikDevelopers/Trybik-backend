@@ -2,9 +2,9 @@ package org.pkwmtt.security.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkwmtt.examCalendar.enums.Role;
 import org.pkwmtt.security.filter.AdminKeyFilter;
 import org.pkwmtt.security.filter.ApiKeyFilter;
+import org.pkwmtt.calendar.exams.enums.Role;
 import org.pkwmtt.security.filter.JwtFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

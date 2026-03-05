@@ -2,8 +2,8 @@ package org.pkwmtt.admin;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.pkwmtt.moderator.Moderator;
-import org.pkwmtt.moderator.ModeratorRepository;
+import org.pkwmtt.moderator.entities.Moderator;
+import org.pkwmtt.moderator.repositories.ModeratorRepository;
 import org.pkwmtt.security.password.PasswordGenerator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

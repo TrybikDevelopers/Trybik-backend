@@ -7,7 +7,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.pkwmtt.timetable.dto.DayOfWeekDTO;
 import org.pkwmtt.timetable.dto.SubjectDTO;
-import org.pkwmtt.examCalendar.enums.SubjectType;
+import org.pkwmtt.calendar.exams.enums.SubjectType;
 import org.pkwmtt.timetable.enums.TypeOfWeek;
 import org.springframework.stereotype.Service;
 

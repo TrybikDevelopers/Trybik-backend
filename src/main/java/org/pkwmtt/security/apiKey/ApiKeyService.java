@@ -1,7 +1,7 @@
 package org.pkwmtt.security.apiKey;
 
 import lombok.RequiredArgsConstructor;
-import org.pkwmtt.examCalendar.enums.Role;
+import org.pkwmtt.calendar.exams.enums.Role;
 import org.pkwmtt.exceptions.IncorrectApiKeyValue;
 import org.pkwmtt.admin.entity.AdminKey;
 import org.pkwmtt.admin.repository.AdminKeyRepository;
